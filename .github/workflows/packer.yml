@@ -1,0 +1,41 @@
+name: Packer - Windows Server 2022 AMI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "ami/**"
+      - ".github/workflows/packer-win2022.yml"
+
+jobs:
+  build-ami:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Packer
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@v3
+        with:
+          packer_version: "latest"
+
+      # Init Packer
+      - name: Packer init
+        run: packer init ami/${{ secrets.AMI_TEMPLATE_FILE }}
+
+      # Build AMI with Packer
+      - name: Packer build
+        env:
+          # AWS Credentials for Private Github Hosts
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+          # Variables Passed to Packer as PKR_VAR_*
+          PKR_VAR_region: ${{ secrets.AWS_DEFAULT_REGION }}
+          PKR_VAR_vpc_id: ${{ secrets.AWS_VPC_ID }}
+          PKR_VAR_subnet_id: ${{ secrets.AWS_SUBNET_ID }}
+
+        run: packer build -color=false ami/${{ secrets.AMI_TEMPLATE_FILE }}
