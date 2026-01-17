@@ -15,6 +15,7 @@ data "aws_iam_policy_document" "packer_ami_builder" {
       "ec2:DescribeKeyPairs",
       "ec2:DescribeNetworkAcls",
       "ec2:DescribeNetworkInterfaces",
+      "ec2:DescribeRegions",
       "ec2:DescribeRouteTables",
       "ec2:DescribeSecurityGroups",
       "ec2:DescribeSubnets",
@@ -35,6 +36,25 @@ data "aws_iam_policy_document" "packer_ami_builder" {
       "ec2:StopInstances",
       "ec2:StartInstances",
       "ec2:TerminateInstances"
+    ]
+    resources = ["*"]
+  }
+
+  # Packer Windows Password Data Rights
+  statement {
+    sid     = "GetWindowsPasswordData"
+    effect  = "Allow"
+    actions = ["ec2:GetPasswordData"]
+    resources = ["*"]
+  }
+
+  # Packer Keypair Rights
+  statement {
+    sid    = "ManageKeyPairs"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateKeyPair",
+      "ec2:DeleteKeyPair"
     ]
     resources = ["*"]
   }
