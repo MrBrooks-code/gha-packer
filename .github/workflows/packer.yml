@@ -38,4 +38,4 @@ jobs:
           PKR_VAR_vpc_id: ${{ secrets.AWS_VPC_ID }}
           PKR_VAR_subnet_id: ${{ secrets.AWS_SUBNET_ID }}
 
-        run: packer build -color=false ami/${{ secrets.AMI_TEMPLATE_FILE }}
+        run: packer build -color=false ami/win2022.pkr.hcl
